@@ -19,9 +19,13 @@ hotels = [
 ]
 
 
-@router.get("/hotels")
-def get_hotels():
-    return [hotel for hotel in hotels]
+@router.get("")
+def get_hotels(page: int = 1,
+               per_page: int = 3
+               ):
+    start = (page*per_page)-per_page
+    end = page*per_page
+    return hotels[start:end]
 
 
 @router.post("")
