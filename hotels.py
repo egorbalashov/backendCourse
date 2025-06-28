@@ -1,10 +1,11 @@
 
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
+from dependency import PaginationDep
 from sсhemas.hotel import Hotel, HotelPATCH
 
-router = APIRouter(prefix='/hotels',tags=["Отели"])
+router = APIRouter(prefix='/hotels', tags=["Отели"])
 
 
 hotels = [
@@ -20,11 +21,10 @@ hotels = [
 
 
 @router.get("")
-def get_hotels(page: int = 1,
-               per_page: int = 3
+def get_hotels(pagination: PaginationDep,
                ):
-    start = (page*per_page)-per_page
-    end = page*per_page
+    start = (pagination.page*pagination.per_page)-pagination.per_page
+    end = pagination.page*pagination.per_page
     return hotels[start:end]
 
 
