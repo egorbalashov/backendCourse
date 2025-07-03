@@ -1,7 +1,7 @@
 
 
 from fastapi import APIRouter, Body, Query
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
 from models.hotels import HotelsOrm
 from src.api.dependency import PaginationDep
@@ -23,11 +23,17 @@ hotels = [
 
 
 @router.get("")
-def get_hotels(pagination: PaginationDep,
-               ):
-    start = (pagination.page*pagination.per_page)-pagination.per_page
-    end = pagination.page*pagination.per_page
-    return hotels[start:end]
+async def get_hotels(pagination: PaginationDep,):
+
+    async with async_session_maker() as session:
+        query = select(HotelsOrm)
+        result = await session.execute(query)
+        hotels = result.scalars().all()
+        return hotels
+
+    # start = (pagination.page*pagination.per_page)-pagination.per_page
+    # end = pagination.page*pagination.per_page
+    # return hotels[start:end]
 
 
 @router.post("")
