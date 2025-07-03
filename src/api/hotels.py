@@ -22,9 +22,9 @@ async def get_hotels(pagination: PaginationDep,
     per_page = pagination.per_page or 5
     async with async_session_maker() as session:
         return await HotelsRepository(session).get_all(
-            title=title, 
-            location=location, 
-            limit=per_page, 
+            title=title,
+            location=location,
+            limit=per_page,
             offset=per_page*(pagination.page-1))
 
 
@@ -51,10 +51,9 @@ async def add_hotel(hotel_data: Hotel = Body(
     })
 ):
     async with async_session_maker() as session:
-        add_hotel_stmt = insert(HotelsOrm).values(**hotel_data.model_dump())
-        await session.execute(add_hotel_stmt)
+        result = await HotelsRepository(session).add(hotel_data)
         await session.commit()
-    return {"status": "ОК"}
+    return {"status": "ОК", "data": result}
 
 
 @router.put("{hotel_id}")

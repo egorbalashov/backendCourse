@@ -23,9 +23,11 @@ class HotelsRepository(BaseRepository):
                  .limit(limit)
                  .offset(offset)
                  )
-        print(query.compile(compile_kwargs={"literal_binds": True}))
+        # print(query.compile(compile_kwargs={"literal_binds": True}))
         result = await self.session.execute(query)
         return result.scalars().all()
+    
+
 
 
 
