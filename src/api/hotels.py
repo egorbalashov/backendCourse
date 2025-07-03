@@ -14,16 +14,17 @@ router = APIRouter(prefix='/hotels', tags=["Отели"])
 
 @router.get("")
 async def get_hotels(pagination: PaginationDep,
-                     id: int | None = Query(None, description="Айди"),
-                     title: str | None = Query(None, description="Название")):
+                     name: str | None = Query(None, description="Название"),
+                     address : str | None = Query(None, description="Адрес")
+                     ):
 
     per_page = pagination.per_page or 5
     async with async_session_maker() as session:
         query = select(HotelsOrm)
-        if id:
-            query = query.filter_by(id=id)
-        if title:
-            query = query.filter_by(title=title)
+        if address :
+            query = query.filter(HotelsOrm.location.ilike(f"%{address}%"))
+        if name:
+            query = query.filter(HotelsOrm.title.ilike(f"%{name}%"))
 
         query = (query
                  .limit(per_page)
@@ -41,16 +42,16 @@ async def add_hotel(hotel_data: Hotel = Body(
         "1": {
         "summary": "Дубай",
         "value": {
-            "title": 'Отель Дубай',
-            "location": 'ул. Мира д.1',
+            "title": 'Отель ПОД СОЛНЦЕМ',
+            "location": 'Дубай, ул. Мира д.1',
         }
 
         },
         "2": {
         "summary": "Сочи",
         "value": {
-            "title": 'Отель Сочи',
-            "location": 'ул. Сочи д.15',
+            "title": 'Отель У МОРЯ',
+            "location": 'Сочи, ул. Земли д.15',
         }
 
         },
