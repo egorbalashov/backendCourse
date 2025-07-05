@@ -10,6 +10,11 @@ class BaseRepository:
     def __init__(self, session):
         self.session = session
 
+    async def get_id(self, id):
+        query = select(self.model).filter_by(id=id)
+        result = await self.session.execute(query)
+        return result.scalars().one()
+
     async def get_all(self, *args, **kwargs):
         query = select(self.model)
         result = await self.session.execute(query)
