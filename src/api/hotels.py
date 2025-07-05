@@ -57,28 +57,37 @@ async def add_hotel(hotel_data: Hotel = Body(
 
 
 @router.put("{hotel_id}")
-def put_hotel(
+async def put_hotel(
     hotel_id: int,
     hotel_data: Hotel,
 ):
-    global hotels
-    for hotel in hotels:
-        if hotel_id == hotel["id"]:
-            hotel["title"] = hotel_data.title
-            hotel["name"] = hotel_data.name
-    return {"status": "success", "result": [hotel for hotel in hotels]}
+    async with async_session_maker() as session:
+        result = await HotelsRepository(session).edit(id=hotel_id,
+                                                      data=hotel_data)
+        await session.commit()
+        return {"status": "ОК"}
 
 
-@router.patch("{hotel_id}")
-def path_hotel(
-    hotel_id: int,
-    hotel_data: HotelPATCH,
-):
-    global hotels
-    for hotel in hotels:
-        if hotel_id == hotel["id"]:
-            if hotel_data.title:
-                hotel["title"] = hotel_data.title
-            if hotel_data.name:
-                hotel["name"] = hotel_data.name
-    return {"status": "success", "result": [hotel for hotel in hotels]}
+@router.delete("{hotel_id}")
+async def delete_hotel(hotel_id: int,
+                       ):
+    async with async_session_maker() as session:
+        result = await HotelsRepository(session).delete(id=hotel_id)
+        await session.commit()
+        return {"status": "ОК"}
+
+# @router.patch("{hotel_id}")
+# async def path_hotel(
+#     hotel_id: int,
+#     hotel_data: HotelPATCH,
+# ):
+#     async with async_session_maker() as session:
+#         result = await HotelsRepository(session).delete(hotel_id= hotel_id, hotel_data=hotel_data )
+#         return {"status": "success", "result": result}
+#     # for hotel in hotels:
+#     #     if hotel_id == hotel["id"]:
+#     #         if hotel_data.title:
+#     #             hotel["title"] = hotel_data.title
+#     #         if hotel_data.name:
+#     #             hotel["name"] = hotel_data.name
+#     # return {"status": "success", "result": [hotel for hotel in hotels]}
