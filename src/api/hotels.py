@@ -76,18 +76,14 @@ async def delete_hotel(hotel_id: int,
         await session.commit()
         return {"status": "ОК"}
 
-# @router.patch("{hotel_id}")
-# async def path_hotel(
-#     hotel_id: int,
-#     hotel_data: HotelPATCH,
-# ):
-#     async with async_session_maker() as session:
-#         result = await HotelsRepository(session).delete(hotel_id= hotel_id, hotel_data=hotel_data )
-#         return {"status": "success", "result": result}
-#     # for hotel in hotels:
-#     #     if hotel_id == hotel["id"]:
-#     #         if hotel_data.title:
-#     #             hotel["title"] = hotel_data.title
-#     #         if hotel_data.name:
-#     #             hotel["name"] = hotel_data.name
-#     # return {"status": "success", "result": [hotel for hotel in hotels]}
+
+@router.patch("{hotel_id}")
+async def path_hotel(
+    hotel_id: int,
+    hotel_data: HotelPATCH,
+):
+    async with async_session_maker() as session:
+        result = await HotelsRepository(session).edit(id=hotel_id, exclude_unset=True,
+                                                      data=hotel_data)
+        await session.commit()
+        return {"status": "ОК"}
