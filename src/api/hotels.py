@@ -6,7 +6,7 @@ from sqlalchemy import insert
 from models.hotels import HotelsOrm
 from repositories.hotels import HotelsRepository
 from src.api.dependency import PaginationDep
-from src.sсhemas.hotel import Hotel, HotelPATCH
+from src.sсhemas.hotel import Hotel, HotelADD, HotelPATCH
 from src.database import async_session_maker
 
 
@@ -37,7 +37,7 @@ async def get_hotel(hotel_id: int = Query(description='Id отеля')):
 
 
 @router.post("")
-async def add_hotel(hotel_data: Hotel = Body(
+async def add_hotel(hotel_data: HotelADD = Body(
     # Пример для отображения в документации
     openapi_examples={
         "1": {
@@ -67,7 +67,7 @@ async def add_hotel(hotel_data: Hotel = Body(
 @router.put("{hotel_id}")
 async def put_hotel(
     hotel_id: int,
-    hotel_data: Hotel,
+    hotel_data: HotelADD,
 ):
     async with async_session_maker() as session:
         result = await HotelsRepository(session).edit(id=hotel_id,
