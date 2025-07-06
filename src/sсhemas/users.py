@@ -17,3 +17,7 @@ class User(BaseModel):
     email :EmailStr 
 
     model_config=ConfigDict(from_attributes=True)
+
+
+class UserWithHashedPassword(User):
+    hash_password: str
