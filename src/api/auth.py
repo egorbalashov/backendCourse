@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter
 from passlib.context import CryptContext
+import sqlalchemy
 
 from repositories.users import UsersRepositoriy
 from sсhemas.users import UserADD, UserRequestsADD
@@ -16,8 +17,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 async def register_user(data: UserRequestsADD):
     hashd_password = pwd_context.hash(data.password)
     new_user_data= UserADD(email=data.email, hash_password=hashd_password)
-    async with async_session_maker() as session:
-        await UsersRepositoriy(session).add(new_user_data)
-        await session.commit()
+    try:
+        async with async_session_maker() as session:
+            await UsersRepositoriy(session).add(new_user_data)
+            await session.commit()
+    except sqlalchemy.exc.IntegrityError as e:
+        return {"status": "false",
+                "detail": "Key email already exists"}
     return {"status": "ОК"}
     
