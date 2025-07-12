@@ -46,6 +46,6 @@ async def login_user(data: UserRequestsADD,
 @router.get("/only_auth")
 async def only_auth(requests: Request):
     if requests.cookies.get("access_token"):
-        access_token=requests.cookies.get("access_token")
-        print(access_token)
-    else: print(None)
+        access_token=AuthService.decode_token(requests.cookies.get("access_token"))
+        return access_token
+
