@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request, Response
 
 import sqlalchemy
 
+from api.dependency import UserIDDep
 from repositories.users import UsersRepositoriy
 from services.auth import AuthService
 from sсhemas.users import UserADD, UserRequestsADD
@@ -43,9 +44,13 @@ async def login_user(data: UserRequestsADD,
         response.set_cookie("access_token", access_token)
         return {"access_token": access_token}
     
-@router.get("/only_auth")
-async def only_auth(requests: Request):
-    if requests.cookies.get("access_token"):
-        access_token=AuthService.decode_token(requests.cookies.get("access_token"))
-        return access_token
+
+@router.get("/me")
+async def get_me(
+        user_id: UserIDDep,
+):
+    async with async_session_maker() as session:
+        user=await UsersRepositoriy(session).get_one_or_none(id=user_id)
+        return user
+
 
