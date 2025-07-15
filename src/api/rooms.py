@@ -74,19 +74,26 @@ async def add_rooms(hotel_id: int = Path(description="ID отеля"), rooms_dat
             status_code=401, detail=f"Отеля с id {hotel_id} не существует")
 
 
-@router.put("/{rooms_id}")
-async def put_rooms(rooms_id: int,
+@router.put("/{room_id}")
+async def put_room(room_id: int,
                     rooms_data: RoomsADD):
     async with async_session_maker() as session:
-        result = await RoomsRepository(session).edit(id=rooms_id,  data=rooms_data)
+        result = await RoomsRepository(session).edit(id=room_id,  data=rooms_data)
         await session.commit()
         return {"status": "ОК"}
 
 
-@router.patch("/{rooms_id}")
-async def patch_rooms(rooms_id: int,
+@router.patch("/{room_id}")
+async def patch_room(room_id: int,
                       rooms_data: RoomsPATCH):
     async with async_session_maker() as session:
-        result = await RoomsRepository(session).edit(id=rooms_id, data=rooms_data, exclude_unset=True)
+        result = await RoomsRepository(session).edit(id=room_id, data=rooms_data, exclude_unset=True)
+        await session.commit()
+        return {"status": "ОК"}
+    
+@router.delete("/{room_id}")
+async def delete_room(room_id: int):
+    async with async_session_maker() as session:
+        result = await RoomsRepository(session).delete(id=room_id)
         await session.commit()
         return {"status": "ОК"}
