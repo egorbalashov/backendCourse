@@ -72,3 +72,12 @@ async def add_rooms(hotel_id: int = Path(description="ID отеля"), rooms_dat
     else:
          raise HTTPException(
                 status_code=401, detail=f"Отеля с id {hotel_id} не существует")
+    
+@router.put("/{rooms_id}")
+async def put_rooms(rooms_id: int,
+                    rooms_data: RoomsADD):
+    async with async_session_maker() as session:
+        result = await RoomsRepository(session).edit(id=rooms_id,  data=rooms_data)
+        await session.commit()
+        return {"status": "ОК"}
+
