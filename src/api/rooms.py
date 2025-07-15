@@ -1,7 +1,8 @@
 
 
-from fastapi import APIRouter, Body, Path, Query
+from fastapi import APIRouter, Body, HTTPException, Path, Query
 
+from repositories.hotels import HotelsRepository
 from repositories.rooms import RoomsRepository
 from sсhemas.rooms import RoomsADD
 from src.database import async_session_maker
@@ -20,7 +21,8 @@ async def get_rooms(hotel_id: int | None = Query(
                         None,  description="Цена номера"),
                     quantity: int | None = Query(
                         None,  description="Количество номеров")
-                    ):
+                    ): 
+
     async with async_session_maker() as session:
         result = await RoomsRepository(session).get_all(
             hotel_id=hotel_id,
@@ -60,6 +62,13 @@ async def add_rooms(hotel_id: int = Path(description="ID отеля"), rooms_dat
 ):
     rooms_data.hotel_id = hotel_id
     async with async_session_maker() as session:
-        result = await RoomsRepository(session).add(rooms_data)
-        await session.commit()
-    return {"status": "ОК", "data": result}
+        hotel= await HotelsRepository(session).get_one_or_none(id=hotel_id)
+
+    if hotel:  
+        async with async_session_maker() as session:
+            result = await RoomsRepository(session).add(rooms_data)
+            await session.commit()
+        return {"status": "ОК", "data": result}
+    else:
+         raise HTTPException(
+                status_code=401, detail=f"Отеля с id {hotel_id} не существует")
