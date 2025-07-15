@@ -34,7 +34,7 @@ class BaseRepository:
 
     async def edit(self, data: BaseModel, exclude_unset: bool = False, **filter_by) -> None:
         update_stmt = update(self.model).filter_by(
-            **filter_by).values(**data.model_dump(exclude_unset=exclude_unset))
+            **filter_by).values(**data.model_dump(exclude_unset=exclude_unset)) # exclude_unset=True В результирующий словарь попадут только те поля, которые были ЯВНО установлены Пропускаются поля со значениями по умолчанию
         result = await self.session.execute(update_stmt)
         return
 

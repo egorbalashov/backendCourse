@@ -14,3 +14,9 @@ class Rooms(RoomsADD):
     id: int
 
     model_config=ConfigDict(from_attributes=True)
+
+class RoomsPATCH(BaseModel):
+    title: str | None=None
+    description: str| None = None
+    price: int | None=None
+    quantity: int | None=None

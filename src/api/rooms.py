@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, HTTPException, Path, Query
 
 from repositories.hotels import HotelsRepository
 from repositories.rooms import RoomsRepository
-from sсhemas.rooms import RoomsADD
+from sсhemas.rooms import RoomsADD, RoomsPATCH
 from src.database import async_session_maker
 
 router = APIRouter(prefix="/hotels", tags=["Номера"])
@@ -12,16 +12,16 @@ router = APIRouter(prefix="/hotels", tags=["Номера"])
 
 @router.get("/rooms/")
 async def get_rooms(hotel_id: int | None = Query(
-                        None, description="ID отеля"),
-                    title: str | None = Query(
-                        None, description="Название номера"),
-                    description: str | None = Query(
-                        None,  description="Описание номера"),
-                    price: int | None = Query(
-                        None,  description="Цена номера"),
-                    quantity: int | None = Query(
-                        None,  description="Количество номеров")
-                    ): 
+    None, description="ID отеля"),
+    title: str | None = Query(
+    None, description="Название номера"),
+    description: str | None = Query(
+    None,  description="Описание номера"),
+    price: int | None = Query(
+    None,  description="Цена номера"),
+    quantity: int | None = Query(
+    None,  description="Количество номеров")
+):
 
     async with async_session_maker() as session:
         result = await RoomsRepository(session).get_all(
@@ -62,17 +62,18 @@ async def add_rooms(hotel_id: int = Path(description="ID отеля"), rooms_dat
 ):
     rooms_data.hotel_id = hotel_id
     async with async_session_maker() as session:
-        hotel= await HotelsRepository(session).get_one_or_none(id=hotel_id)
+        hotel = await HotelsRepository(session).get_one_or_none(id=hotel_id)
 
-    if hotel:  
+    if hotel:
         async with async_session_maker() as session:
             result = await RoomsRepository(session).add(rooms_data)
             await session.commit()
         return {"status": "ОК", "data": result}
     else:
-         raise HTTPException(
-                status_code=401, detail=f"Отеля с id {hotel_id} не существует")
-    
+        raise HTTPException(
+            status_code=401, detail=f"Отеля с id {hotel_id} не существует")
+
+
 @router.put("/{rooms_id}")
 async def put_rooms(rooms_id: int,
                     rooms_data: RoomsADD):
@@ -81,3 +82,11 @@ async def put_rooms(rooms_id: int,
         await session.commit()
         return {"status": "ОК"}
 
+
+@router.patch("/{rooms_id}")
+async def patch_rooms(rooms_id: int,
+                      rooms_data: RoomsPATCH):
+    async with async_session_maker() as session:
+        result = await RoomsRepository(session).edit(id=rooms_id, data=rooms_data, exclude_unset=True)
+        await session.commit()
+        return {"status": "ОК"}
