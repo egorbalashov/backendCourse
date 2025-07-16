@@ -25,7 +25,7 @@ class BaseRepository:
         return [self.schema.model_validate(model, from_attributes=True) for model in result.scalars().all()]
 
     async def get_all(self, *args, **kwargs):
-        return self.get_filtered()
+        return await self.get_filtered()
 
     async def add(self, data: BaseModel):
         add_data_stmt = insert(self.model).values(

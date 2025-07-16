@@ -1,7 +1,5 @@
 
 
-
-
 from fastapi import APIRouter, Response
 
 from api.dependency import DBDep, UserIDDep
@@ -10,13 +8,26 @@ from sсhemas.bookings import BookingsAdd, BookingsAddRequests
 
 router = APIRouter(prefix="/bookings", tags=["Бронирование"])
 
+
+@router.get("/bookings")
+async def all_bookings(db: DBDep):
+    bookings = await db.bookings.get_all()
+    return {"status": "ОК", "data": bookings}
+
+
+@router.get("/bookings/me")
+async def all_bookings_me(db: DBDep, user_id: UserIDDep):
+    bookings_me = await db.bookings.get_filtered(user_id=user_id)
+    return {"status": "ОК", "data": bookings_me}
+
+
 @router.post("")
 async def add_booking(data_booking: BookingsAddRequests,
                       user_id: UserIDDep,
-                      db:DBDep):
-    room= await db.rooms.get_one_or_none(id=data_booking.room_id)
-    _bookings_data = BookingsAdd(price=room.price,user_id=user_id, **data_booking.model_dump())
-    booking =await db.bookings.add(data=_bookings_data)
+                      db: DBDep):
+    room = await db.rooms.get_one_or_none(id=data_booking.room_id)
+    _bookings_data = BookingsAdd(
+        price=room.price, user_id=user_id, **data_booking.model_dump())
+    booking = await db.bookings.add(data=_bookings_data)
     await db.commit()
     return {"status": "ОК", "data": booking}
-
