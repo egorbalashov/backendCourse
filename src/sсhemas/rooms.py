@@ -2,6 +2,8 @@
 
 from pydantic import BaseModel, ConfigDict
 
+from sсhemas.fasilities import Fasilities
+
 
 class RoomsAddRequests(BaseModel):
     title: str
@@ -23,6 +25,10 @@ class Rooms(RoomsADD):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class RoomWithRels(Rooms):
+    facilities: list[Fasilities]
+
 
 
 class RoomsPatchRequests(BaseModel):
