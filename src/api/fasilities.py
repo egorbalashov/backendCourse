@@ -10,7 +10,7 @@ router = APIRouter(prefix="/fasilities", tags=["Удобства"])
 
 
 @router.get("")
-async def all_bookings(db: DBDep):
+async def all_fasilities(db: DBDep):
     fasilities = await db.fasilities.get_all()
     return {"status": "ОК", "data": fasilities}
 
