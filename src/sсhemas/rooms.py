@@ -8,6 +8,7 @@ class RoomsAddRequests(BaseModel):
     description: str | None = None
     price: int
     quantity: int
+    fasilities_ids: list[int] | None = None
 
 
 class RoomsADD(BaseModel):
@@ -16,6 +17,7 @@ class RoomsADD(BaseModel):
     description: str | None = None
     price: int
     quantity: int
+    fasilities_ids: list[int] | None = None
 
 
 class Rooms(RoomsADD):
