@@ -2,16 +2,16 @@
 
 from datetime import date
 from sqlalchemy import func, select
-from models.hotels import HotelsOrm
-from models.rooms import RoomsOrm
-from repositories.base import BaseRepository
-from repositories.utils import rooms_ids_for_booking
-from sсhemas.hotel import Hotel
+from src.models.hotels import HotelsOrm
+from src.models.rooms import RoomsOrm
+from src.repositories.base import BaseRepository
+from src.repositories.utils import rooms_ids_for_booking
+from src.repositories.mappers.mappers import HotelDataMapper
 
 
 class HotelsRepository(BaseRepository):
     model=HotelsOrm
-    schema = Hotel
+    mapper = HotelDataMapper
 
     # async def get_all(self,
     #                   title,

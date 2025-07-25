@@ -4,10 +4,9 @@ from fastapi import APIRouter, HTTPException, Request, Response
 
 import sqlalchemy
 
-from api.dependency import DBDep, UserIDDep
-from repositories.users import UsersRepositoriy
-from services.auth import AuthService
-from sсhemas.users import UserADD, UserRequestsADD
+from src.api.dependency import DBDep, UserIDDep
+from src.services.auth import AuthService
+from src.sсhemas.users import UserADD, UserRequestsADD
 
 
 router = APIRouter(prefix="/auth", tags=["Авторизация и Аутентификация"])

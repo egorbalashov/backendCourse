@@ -2,14 +2,15 @@
 
 from pydantic import EmailStr
 from sqlalchemy import select
-from models.users import UsersOrm
-from repositories.base import BaseRepository
-from sсhemas.users import User, UserWithHashedPassword
+from repositories.mappers.mappers import UserDataMapper
+from src.models.users import UsersOrm
+from src.repositories.base import BaseRepository
+from src.sсhemas.users import User, UserWithHashedPassword
 
 
 class UsersRepositoriy(BaseRepository):
     model = UsersOrm
-    schema = User
+    mapper = UserDataMapper
 
     async def get_user_hashed_password(self, email: EmailStr):
         query = select(self.model).filter_by(email=email)

@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 
-from services.auth import AuthService
+from src.services.auth import AuthService
 from src.utils.db_manager import DBManager
 from src.database import async_session_maker
 

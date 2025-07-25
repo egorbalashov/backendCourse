@@ -2,8 +2,8 @@
 
 from fastapi import APIRouter
 
-from api.dependency import DBDep
-from sсhemas.fasilities import FasilitiesAddRequests
+from src.api.dependency import DBDep
+from src.sсhemas.fasilities import FasilitiesAddRequests
 
 
 router = APIRouter(prefix="/fasilities", tags=["Удобства"])
