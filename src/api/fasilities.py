@@ -1,18 +1,17 @@
 
-
 from fastapi import APIRouter
 
 from src.api.dependency import DBDep
 from src.sсhemas.fasilities import FasilitiesAddRequests
-
+from fastapi_cache.decorator import cache
 
 router = APIRouter(prefix="/fasilities", tags=["Удобства"])
 
 
 @router.get("")
-async def all_fasilities(db: DBDep):
-    fasilities = await db.fasilities.get_all()
-    return {"status": "ОК", "data": fasilities}
+@cache(expire=10)
+async def get_facilities(db: DBDep):
+    return await db.fasilities.get_all()
 
 
 @router.post("")
