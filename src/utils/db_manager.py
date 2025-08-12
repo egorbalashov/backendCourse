@@ -21,7 +21,7 @@ class DBManager:
         self.users = UsersRepositoriy(self.session)
         self.bookings = BookingsRepositories(self.session)
         self.fasilities = FasilitiesRepositories(self.session)
-        self.room_fasilities = RoomFasilitiesRepositories(self.session)
+        self.facilities_ids = RoomFasilitiesRepositories(self.session)
 
         return self
 

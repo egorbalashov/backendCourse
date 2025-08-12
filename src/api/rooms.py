@@ -38,7 +38,7 @@ async def add_rooms(db: DBDep,
             "description": "Одноместный номер с кондиционером",
             "price": 3000,
             "quantity": 10,
-            "fasilities_ids": [1,2]
+            "facilities_ids": [1,2]
         }
         },
         "2": {
@@ -48,7 +48,7 @@ async def add_rooms(db: DBDep,
             "description": "Двухместный номер с кондиционером",
             "price": 8000,
             "quantity": 15,
-            "fasilities_ids": [3]
+            "facilities_ids": [3]
         }
         },
                             })
@@ -57,9 +57,9 @@ async def add_rooms(db: DBDep,
     _room_data = RoomsADD(hotel_id=hotel_id, **room_data.model_dump())
     room = await db.rooms.add(data=_room_data)
 
-    room_data.fasilities_ids
-    rooms_fasilities_date=[RoomFasilitiesAdd(room_id=room.id, facility_id=f_id) for f_id in room_data.fasilities_ids]
-    await db.room_fasilities.add_bulk(rooms_fasilities_date)
+    if room_data.facilities_ids:
+        rooms_fasilities_date=[RoomFasilitiesAdd(room_id=room.id, facility_id=f_id) for f_id in room_data.facilities_ids]
+        await db.facilities_ids.add_bulk(rooms_fasilities_date)
 
     await db.commit()
 
