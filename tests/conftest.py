@@ -3,6 +3,7 @@ from typing import AsyncGenerator, List
 from httpx import ASGITransport, AsyncClient
 import pytest
 
+from src.api.dependency import get_db
 from src.config import settings
 from src.database import Base, engine_null_pool, async_session_maker_null_pool
 from src.models import *
@@ -22,10 +23,22 @@ def check_test_mode():
 
 
 # Корутина для выполнения запросов в БД (теперь можно просто передавать db)
-@pytest.fixture(scope="function")
-async def db() -> AsyncGenerator[DBManager, None]:
+async def get_db_null_pool() -> AsyncGenerator[DBManager, None]:
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
         yield db
+
+
+@pytest.fixture(scope="function")
+async def db() -> AsyncGenerator[DBManager, None]:
+    async for db in get_db_null_pool():
+        yield db
+"""
+Эта строка выполняет переопределение dependency injection в FastAPI. 
+get_db - это dependency функция, которая обычно возвращает сессию/подключение к базе данных
+get_db_null_pool - это альтернативная функция, которая будет использоваться вместо оригинальной
+"""
+app.dependency_overrides[get_db] = get_db_null_pool  # переопределение dependency injection в FastAPI
+
 
 @pytest.fixture(scope="session",    # scope: определяет время жизни фикстуры:
                                     # "function" - для каждой тест-функции (по умолчанию)
@@ -40,7 +53,6 @@ async def setup_database(check_test_mode):
         await conn.run_sync(Base.metadata.create_all)
 
 
-
 # Корутина для выполнения запросов (теперь можно просто передавать ac)
 @pytest.fixture(scope="session")
 async def ac() -> AsyncGenerator[AsyncClient, None]:
@@ -49,7 +61,7 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest.fixture(scope="session", autouse=True)
-async def register_user(ac, setup_database):
+async def register_user(ac: AsyncClient, setup_database):
     await ac.post(
         "/auth/register",
         json={
@@ -57,6 +69,7 @@ async def register_user(ac, setup_database):
             "password": "1234"
         }
     )
+
 
 @pytest.fixture(scope="session", autouse=True)
 async def add_hotels(setup_database):
@@ -68,6 +81,7 @@ async def add_hotels(setup_database):
         await db.hotels.add_bulk(hotels)
         await db.commit()
 
+
 @pytest.fixture(scope="session", autouse=True)
 async def add_rooms(add_hotels):
     with open('tests/mock_rooms.json', 'r', encoding='utf-8') as file:
@@ -77,4 +91,3 @@ async def add_rooms(add_hotels):
     async with DBManager(session_factory=async_session_maker_null_pool) as db:
         await db.rooms.add_bulk(rooms)
         await db.commit()
-

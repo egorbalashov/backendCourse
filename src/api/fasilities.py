@@ -22,3 +22,17 @@ async def add_fasilities(db: DBDep,
     await db.commit()
 
     return {"status": "OK", "data": room}
+
+@router.get("/facilities/stats")
+async def get_facilities_stats(db: DBDep):
+    facilities = await db.fasilities.get_all()
+    print(facilities)
+    result = []
+    for facility in facilities:
+        rooms_count = len(facility.rooms)  # Получаем количество комнат
+        result.append({
+            "id": facility.id,
+            "title": facility.title,
+            "rooms_count": rooms_count
+        })
+    return result
