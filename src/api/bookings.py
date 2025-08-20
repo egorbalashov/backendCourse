@@ -17,6 +17,7 @@ async def all_bookings(db: DBDep):
 
 @router.get("/bookings/me")
 async def all_bookings_me(db: DBDep, user_id: UserIDDep):
+    
     bookings_me = await db.bookings.get_filtered(user_id=user_id)
     return {"status": "ОК", "data": bookings_me}
 
@@ -26,6 +27,8 @@ async def add_booking(data_booking: BookingsAddRequests,
                       user_id: UserIDDep,
                       db: DBDep):
     room = await db.rooms.get_one_or_none(id=data_booking.room_id)
+    print(f"Количество доступных бронирований", room.quantity)
+    count_room=await db.bookings.add_booking(data_booking=data_booking,count_room=room.quantity)
     _bookings_data = BookingsAdd(
         price=room.price, user_id=user_id, **data_booking.model_dump())
     booking = await db.bookings.add(data=_bookings_data)
