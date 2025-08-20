@@ -1,6 +1,8 @@
 
 
 from datetime import date
+
+from fastapi import HTTPException
 from src.repositories.utils import rooms_ids_for_booking
 from src.repositories.mappers.mappers import BookingDataMapper
 from src.database import engine
@@ -37,7 +39,7 @@ class BookingsRepositories(BaseRepository):
             new_booking = await self.add(data)
             return new_booking
         else:
-            raise Exception
+            raise HTTPException(500)
                     
 
 
