@@ -24,7 +24,7 @@ async def register_user(data: UserRequestsADD,
     except sqlalchemy.exc.IntegrityError as e:
         return {"status": "false",
                 "detail": "Key email already exists"}
-    return {"status": "ОК"}
+    return {"status": "OK"}
 
 
 @router.post("/login")
