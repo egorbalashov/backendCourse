@@ -3,6 +3,10 @@ from typing import AsyncGenerator, List
 from httpx import ASGITransport, AsyncClient
 import pytest
 
+from unittest import mock
+
+mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda f: f).start()
+
 from src.api.dependency import get_db
 from src.config import settings
 from src.database import Base, engine_null_pool, async_session_maker_null_pool
@@ -69,6 +73,23 @@ async def register_user(ac: AsyncClient, setup_database):
             "password": "1234"
         }
     )
+
+@pytest.fixture(scope="session", autouse=True)
+async def authenticated_ac(ac: AsyncClient, register_user):
+        response = await ac.post(
+        "/auth/login",
+        json={
+            "email": "kot@pes.com",
+            "password": "1234"
+        }
+    )
+        response_json=response.json()
+        assert response.status_code==200
+        assert response_json["access_token"] is not None
+        # print(f"{response.json()=}")
+        yield ac
+
+
 
 
 @pytest.fixture(scope="session", autouse=True)
