@@ -1,28 +1,21 @@
-
-
 from datetime import date
 
 from fastapi import HTTPException
+from sqlalchemy import select
+
 from src.repositories.utils import rooms_ids_for_booking
 from src.repositories.mappers.mappers import BookingDataMapper
-from src.database import engine
-from sqlalchemy import func, select
 from src.models.bookings import BookingsOrm
-from src.models.rooms import RoomsOrm
 from src.repositories.base import BaseRepository
-from src.sсhemas.bookings import Booking, BookingsAdd, BookingsAddRequests
+from src.sсhemas.bookings import BookingsAdd
 
 
 class BookingsRepositories(BaseRepository):
-    model=BookingsOrm
+    model = BookingsOrm
     mapper = BookingDataMapper
 
-
     async def get_bookings_with_today_checkin(self):
-        query = (
-            select(BookingsOrm)
-            .filter(BookingsOrm.date_from == date.today())
-        )
+        query = select(BookingsOrm).filter(BookingsOrm.date_from == date.today())
         res = await self.session.execute(query)
         return [self.mapper.map_to_domain_entity(booking) for booking in res.scalars().all()]
 
@@ -40,7 +33,3 @@ class BookingsRepositories(BaseRepository):
             return new_booking
         else:
             raise HTTPException(500)
-                    
-
-
-

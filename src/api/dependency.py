@@ -1,5 +1,3 @@
-
-
 from typing import Annotated
 from fastapi import Depends, HTTPException, Query, Request
 from pydantic import BaseModel
@@ -10,10 +8,8 @@ from src.database import async_session_maker
 
 
 class PaginationParams(BaseModel):
-
     page: Annotated[int, Query(1, ge=1, description="Номер страницы")]
-    per_page: Annotated[int, Query(
-        15, gt=1, lt=30, description="Количество элементов на странице")]
+    per_page: Annotated[int, Query(15, gt=1, lt=30, description="Количество элементов на странице")]
 
 
 PaginationDep = Annotated[PaginationParams, Depends()]
@@ -41,5 +37,6 @@ def get_db_manager():
 async def get_db():
     async with get_db_manager() as db:
         yield db
+
 
 DBDep = Annotated[DBManager, Depends(get_db)]

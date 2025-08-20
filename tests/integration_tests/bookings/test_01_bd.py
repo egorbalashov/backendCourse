@@ -1,8 +1,4 @@
 from datetime import date
-from typing import AsyncGenerator
-
-import pytest
-
 from src.sсhemas.bookings import BookingsAdd
 from src.utils.db_manager import DBManager
 
@@ -25,7 +21,6 @@ async def test_booking_crud(db: DBManager):
     assert created_booking is not None
     assert created_booking.price == 100
 
-
     updated_data = BookingsAdd(
         user_id=user_id,
         room_id=room_id,
@@ -33,18 +28,17 @@ async def test_booking_crud(db: DBManager):
         date_to=date(2024, 8, 20),
         price=200,
     )
-    update_result = await db.bookings.edit(
+    await db.bookings.edit(
         data=updated_data,
         exclude_unset=True,
-        id=created_booking.id  # Добавляем фильтр по ID
+        id=created_booking.id,  # Добавляем фильтр по ID
     )
 
     result_booking = await db.bookings.get_one_or_none(id=user_id)
     assert result_booking is not None
     assert result_booking.price == updated_data.price
-    
-    delete_booking = await db.bookings.delete(id=user_id)
-    result_booking = await db.bookings.get_one_or_none(id=user_id)
-    assert  result_booking is None
-    await db.commit()
 
+    await db.bookings.delete(id=user_id)
+    result_booking = await db.bookings.get_one_or_none(id=user_id)
+    assert result_booking is None
+    await db.commit()

@@ -1,3 +1,4 @@
+# ruff: noqa: E402 F403
 import json
 from typing import AsyncGenerator, List
 from httpx import ASGITransport, AsyncClient
@@ -36,6 +37,8 @@ async def get_db_null_pool() -> AsyncGenerator[DBManager, None]:
 async def db() -> AsyncGenerator[DBManager, None]:
     async for db in get_db_null_pool():
         yield db
+
+
 """
 Эта строка выполняет переопределение dependency injection в FastAPI. 
 get_db - это dependency функция, которая обычно возвращает сессию/подключение к базе данных
@@ -44,13 +47,14 @@ get_db_null_pool - это альтернативная функция, кото�
 app.dependency_overrides[get_db] = get_db_null_pool  # переопределение dependency injection в FastAPI
 
 
-@pytest.fixture(scope="session",    # scope: определяет время жизни фикстуры:
-                                    # "function" - для каждой тест-функции (по умолчанию)
-                                    # "class" - для каждого тест-класса
-                                    # "module" - для каждого модуля с тестами
-                                    # "session" - один раз на все тесты (как в этом случае)
-
-                autouse=True)
+@pytest.fixture(
+    scope="session",  # scope: определяет время жизни фикстуры:
+    # "function" - для каждой тест-функции (по умолчанию)
+    # "class" - для каждого тест-класса
+    # "module" - для каждого модуля с тестами
+    # "session" - один раз на все тесты (как в этом случае)
+    autouse=True,
+)
 async def setup_database(check_test_mode):
     async with engine_null_pool.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
@@ -66,33 +70,20 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
 
 @pytest.fixture(scope="session", autouse=True)
 async def register_user(ac: AsyncClient, setup_database):
-    await ac.post(
-        "/auth/register",
-        json={
-            "email": "kot@pes.com",
-            "password": "1234"
-        }
-    )
+    await ac.post("/auth/register", json={"email": "kot@pes.com", "password": "1234"})
+
 
 @pytest.fixture(scope="session")
 async def authenticated_ac(register_user, ac: AsyncClient):
-    response =await ac.post(
-        "/auth/login",
-        json={
-            "email": "kot@pes.com",
-            "password": "1234"
-        }
-    )
-    assert response.status_code==200
+    response = await ac.post("/auth/login", json={"email": "kot@pes.com", "password": "1234"})
+    assert response.status_code == 200
     assert ac.cookies["access_token"]
     yield ac
 
 
-
-
 @pytest.fixture(scope="session", autouse=True)
 async def add_hotels(setup_database):
-    with open('tests/mock_hotels.json', 'r', encoding='utf-8') as file:
+    with open("tests/mock_hotels.json", "r", encoding="utf-8") as file:
         hotels_data: List[dict] = json.load(file)
         # 3. Используем один клиент для всех запросов
     hotels = [HotelADD.model_validate(hotel) for hotel in hotels_data]
@@ -103,7 +94,7 @@ async def add_hotels(setup_database):
 
 @pytest.fixture(scope="session", autouse=True)
 async def add_rooms(add_hotels):
-    with open('tests/mock_rooms.json', 'r', encoding='utf-8') as file:
+    with open("tests/mock_rooms.json", "r", encoding="utf-8") as file:
         hotels_rooms: List[dict] = json.load(file)
         # 3. Используем один клиент для всех запросов
     rooms = [RoomsADD.model_validate(room) for room in hotels_rooms]

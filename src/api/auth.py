@@ -1,6 +1,4 @@
-
-
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, HTTPException, Response
 
 import sqlalchemy
 
@@ -13,31 +11,24 @@ router = APIRouter(prefix="/auth", tags=["Авторизация и Аутент
 
 
 @router.post("/register")
-async def register_user(data: UserRequestsADD,
-                        db: DBDep):
+async def register_user(data: UserRequestsADD, db: DBDep):
     hashd_password = AuthService().hash_password(data.password)
     new_user_data = UserADD(email=data.email, hash_password=hashd_password)
     try:
-
         await db.users.add(new_user_data)
         await db.commit()
-    except sqlalchemy.exc.IntegrityError as e:
-         raise HTTPException(status_code=400)
+    except sqlalchemy.exc.IntegrityError:
+        raise HTTPException(status_code=400)
     return {"status": "OK"}
 
 
 @router.post("/login")
-async def login_user(data: UserRequestsADD,
-                     response: Response,
-                     db: DBDep):
-
+async def login_user(data: UserRequestsADD, response: Response, db: DBDep):
     user = await db.users.get_user_hashed_password(email=data.email)
     if not user:
-        raise HTTPException(
-            status_code=401, detail="Неверный логин или пароль")
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
     if not AuthService().verify_password(data.password, user.hash_password):
-        raise HTTPException(
-            status_code=401, detail="Неверный логин или пароль")
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
 
     access_token = AuthService().create_access_token({"user_id": user.id})
     response.set_cookie("access_token", access_token)
@@ -45,11 +36,7 @@ async def login_user(data: UserRequestsADD,
 
 
 @router.get("/me")
-async def get_me(
-        user_id: UserIDDep,
-        db: DBDep
-):
-
+async def get_me(user_id: UserIDDep, db: DBDep):
     user = await db.users.get_one_or_none(id=user_id)
     return user
 

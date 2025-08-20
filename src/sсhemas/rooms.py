@@ -1,5 +1,3 @@
-
-
 from pydantic import BaseModel, ConfigDict
 
 from sсhemas.fasilities import Fasilities
@@ -26,9 +24,9 @@ class Rooms(RoomsADD):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class RoomWithRels(Rooms):
     facilities: list[Fasilities]
-
 
 
 class RoomsPatchRequests(BaseModel):
@@ -36,6 +34,7 @@ class RoomsPatchRequests(BaseModel):
     description: str | None = None
     price: int | None = None
     facilities_ids: list[int] = []
+
 
 class RoomPatch(BaseModel):
     hotel_id: int | None = None

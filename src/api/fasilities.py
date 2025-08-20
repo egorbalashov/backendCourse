@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from src.api.dependency import DBDep
@@ -15,24 +14,10 @@ async def get_facilities(db: DBDep):
 
 
 @router.post("")
-async def add_fasilities(db: DBDep,
-                         title: FasilitiesAddRequests
-                         ):
+async def add_fasilities(db: DBDep, title: FasilitiesAddRequests):
     room = await db.fasilities.add(data=title)
     await db.commit()
 
     return {"status": "OK", "data": room}
 
-@router.get("/facilities/stats")
-async def get_facilities_stats(db: DBDep):
-    facilities = await db.fasilities.get_all()
-    print(facilities)
-    result = []
-    for facility in facilities:
-        rooms_count = len(facility.rooms)  # Получаем количество комнат
-        result.append({
-            "id": facility.id,
-            "title": facility.title,
-            "rooms_count": rooms_count
-        })
-    return result
+

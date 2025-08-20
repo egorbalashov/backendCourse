@@ -1,6 +1,4 @@
-
 from httpx import AsyncClient
-
 
 
 async def test_get_hotels(ac: AsyncClient):
@@ -9,7 +7,7 @@ async def test_get_hotels(ac: AsyncClient):
         params={
             "date_from": "2025-01-05",
             "date_to": "2026-01-06",
-        }
-        ) 
+        },
+    )
     print(f"{response.json()=}")
     assert response.status_code == 200

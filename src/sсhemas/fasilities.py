@@ -1,21 +1,18 @@
-
-
-
 from pydantic import BaseModel
 
 
 class FasilitiesAddRequests(BaseModel):
-    title:str
+    title: str
 
 
 class Fasilities(FasilitiesAddRequests):
-    id:int
-     
+    id: int
+
 
 class RoomFasilitiesAdd(BaseModel):
     room_id: int
-    facility_id :int
+    facility_id: int
 
 
 class RoomFasilities(RoomFasilitiesAdd):
-    id:int
+    id: int

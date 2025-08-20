@@ -1,14 +1,17 @@
-from httpx import AsyncClient
 import pytest
 from src.services.auth import AuthService
 
-@pytest.mark.parametrize("email, password, status_code", [
-    ("k0t@pes.com", "1234", 200),
-    ("k0t@pes.com", "1234", 400),
-    ("k0t1@pes.com", "1235", 200),
-    ("abcde", "1235", 422),
-    ("abcde@abc", "1235", 422),
-])
+
+@pytest.mark.parametrize(
+    "email, password, status_code",
+    [
+        ("k0t@pes.com", "1234", 200),
+        ("k0t@pes.com", "1234", 400),
+        ("k0t1@pes.com", "1235", 200),
+        ("abcde", "1235", 422),
+        ("abcde@abc", "1235", 422),
+    ],
+)
 async def test_auth_flow(email: str, password: str, status_code: int, ac):
     # /register
     resp_register = await ac.post(
@@ -16,7 +19,7 @@ async def test_auth_flow(email: str, password: str, status_code: int, ac):
         json={
             "email": email,
             "password": password,
-        }
+        },
     )
     assert resp_register.status_code == status_code
     if status_code != 200:
@@ -28,7 +31,7 @@ async def test_auth_flow(email: str, password: str, status_code: int, ac):
         json={
             "email": email,
             "password": password,
-        }
+        },
     )
     assert resp_login.status_code == 200
     assert ac.cookies["access_token"]
@@ -47,12 +50,6 @@ async def test_auth_flow(email: str, password: str, status_code: int, ac):
     resp_logout = await ac.post("/auth/logout")
     assert resp_logout.status_code == 200
     assert "access_token" not in ac.cookies
-
-
-
-
-
-
 
 
 def test_decode_and_encode_access_token():

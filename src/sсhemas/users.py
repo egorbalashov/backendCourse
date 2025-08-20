@@ -1,5 +1,3 @@
-
-
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
@@ -12,11 +10,12 @@ class UserADD(BaseModel):
     email: EmailStr
     hash_password: str
 
+
 class User(BaseModel):
     id: int
-    email :EmailStr 
+    email: EmailStr
 
-    model_config=ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserWithHashedPassword(User):
