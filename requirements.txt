@@ -133,6 +133,8 @@ rich==14.0.0
     #   typer
 rich-toolkit==0.14.7
     # via fastapi-cli
+ruff==0.12.9
+    # via backendcourse (pyproject.toml)
 shellingham==1.5.4
     # via typer
 six==1.17.0
