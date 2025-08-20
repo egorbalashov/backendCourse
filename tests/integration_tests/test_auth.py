@@ -2,68 +2,51 @@ from httpx import AsyncClient
 import pytest
 from src.services.auth import AuthService
 
-
 @pytest.mark.parametrize("email, password, status_code", [
-    ("test_api_register_user@example.com", "123456", 200),
-    ("2test_api_register_user@YA.com", "123456", 200),
+    ("k0t@pes.com", "1234", 200),
+    ("k0t@pes.com", "1234", 400),
+    ("k0t1@pes.com", "1235", 200),
+    ("abcde", "1235", 422),
+    ("abcde@abc", "1235", 422),
 ])
-async def test_register_user(email,
-                             password,
-                             status_code,
-                             ac: AsyncClient,
-                             ):
-    response = await ac.post(
-        url="/auth/register",
+async def test_auth_flow(email: str, password: str, status_code: int, ac):
+    # /register
+    resp_register = await ac.post(
+        "/auth/register",
         json={
             "email": email,
-            "password": password
+            "password": password,
         }
     )
-    result = response.json()
-    assert response.status_code == status_code
-    assert result["status"] == "OK"
+    assert resp_register.status_code == status_code
+    if status_code != 200:
+        return
 
-
-@pytest.mark.parametrize("email, password, status_code", [
-    ("test_api_register_user@example.com", "123456", 200),
-    ("2test_api_register_user@YA.com", "123456", 200),
-])
-async def test_login_user(email,
-                          password,
-                          status_code,
-                          ac: AsyncClient,
-                          ):
-    response = await ac.post(
-        url="/auth/login",
+    # /login
+    resp_login = await ac.post(
+        "/auth/login",
         json={
             "email": email,
-            "password": password
+            "password": password,
         }
     )
-    result = response.json()
-    assert response.status_code == status_code
-    assert result["access_token"]
+    assert resp_login.status_code == 200
+    assert ac.cookies["access_token"]
+    assert "access_token" in resp_login.json()
 
+    # /me
+    resp_me = await ac.get("/auth/me")
+    assert resp_me.status_code == 200
+    user = resp_me.json()
+    assert user["email"] == email
+    assert "id" in user
+    assert "password" not in user
+    assert "hashed_password" not in user
 
-
-async def test_me_user(ac: AsyncClient,  ):
-    response = await ac.get(
-        url="/auth/me",
-
-    )
-    result = response.json()
-    assert response.status_code == 200
-    assert result["id"]
-
-
-async def test_logout_user(ac: AsyncClient,  ):
-    response = await ac.post(
-        url="/auth/logout",
-
-    )
-    result = response.json()
-    assert response.status_code == 200
-
+    # /logout
+    resp_logout = await ac.post("/auth/logout")
+    assert resp_logout.status_code == 200
+    assert "access_token" not in ac.cookies
 
 
 
