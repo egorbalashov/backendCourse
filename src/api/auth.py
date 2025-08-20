@@ -22,8 +22,7 @@ async def register_user(data: UserRequestsADD,
         await db.users.add(new_user_data)
         await db.commit()
     except sqlalchemy.exc.IntegrityError as e:
-        return {"status": "false",
-                "detail": "Key email already exists"}
+         raise HTTPException(status_code=400)
     return {"status": "OK"}
 
 
