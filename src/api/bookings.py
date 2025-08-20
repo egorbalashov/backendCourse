@@ -27,10 +27,9 @@ async def add_booking(data_booking: BookingsAddRequests,
                       user_id: UserIDDep,
                       db: DBDep):
     room = await db.rooms.get_one_or_none(id=data_booking.room_id)
-    print(f"Количество доступных бронирований", room.quantity)
-    count_room=await db.bookings.add_booking(data_booking=data_booking,count_room=room.quantity)
+    hotel = await db.hotels.get_one_or_none(id=room.hotel_id)
     _bookings_data = BookingsAdd(
         price=room.price, user_id=user_id, **data_booking.model_dump())
-    booking = await db.bookings.add(data=_bookings_data)
+    booking = await db.bookings.add_booking(_bookings_data, hotel_id=hotel.id)
     await db.commit()
     return {"status": "ОК", "data": booking}
