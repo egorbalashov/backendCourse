@@ -1,7 +1,12 @@
 from pydantic import BaseModel
 from sqlalchemy import delete, insert, select, update
-from src.repositories.mappers.base import DataMapper
 
+from src.exceptions import ObjectNotFoundException, UserAlreadyExistsException
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError
+
+from src.repositories.mappers.base import DataMapper
+from asyncpg.exceptions import UniqueViolationError
 
 class BaseRepository:
     model = None
@@ -17,6 +22,15 @@ class BaseRepository:
         if model is None:
             return None
         return self.mapper.map_to_domain_entity(model)
+    
+    async def get_one(self, **filter_by) -> BaseModel:
+        query = select(self.model).filter_by(**filter_by)
+        result = await self.session.execute(query)
+        try:
+            model = result.scalar_one()
+        except NoResultFound:
+            raise ObjectNotFoundException
+        return self.mapper.map_to_domain_entity(model)
 
     async def get_all(self, *args, **kwargs):
         return await self.get_filtered()
@@ -27,9 +41,13 @@ class BaseRepository:
         return [self.mapper.map_to_domain_entity(model) for model in result.scalars().all()]
 
     async def add(self, data: BaseModel):
-        add_data_stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
-        result = await self.session.execute(add_data_stmt)
-        model = result.scalars().one()
+        try: 
+            add_data_stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
+        
+            result = await self.session.execute(add_data_stmt)
+            model = result.scalars().one()
+        except Exception:
+            raise UserAlreadyExistsException
         return self.mapper.map_to_domain_entity(model)
 
     async def add_bulk(self, data: list[BaseModel]):
