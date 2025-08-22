@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, Response
 
 import sqlalchemy
 
-from exceptions import UserAlreadyExistsException
+
+from src.exceptions import ObjectAlreadyExistsException
 from src.api.dependency import DBDep, UserIDDep
 from src.services.auth import AuthService
 from src.sсhemas.users import UserADD, UserRequestsADD
@@ -13,13 +14,16 @@ router = APIRouter(prefix="/auth", tags=["Авторизация и Аутент
 
 @router.post("/register")
 async def register_user(data: UserRequestsADD, db: DBDep):
+    try: 
         hashd_password = AuthService().hash_password(data.password)
         new_user_data = UserADD(email=data.email, hash_password=hashd_password)
+    
         await db.users.add(new_user_data)
         await db.commit()
+    except ObjectAlreadyExistsException:
+        raise HTTPException(status_code=409, detail="Пользователь с такой почтой уже существует")
 
-
-        return {"status": "OK"}
+    return {"status": "OK"}
 
 
 @router.post("/login")

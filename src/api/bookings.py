@@ -3,6 +3,8 @@ from src.exceptions import ObjectNotFoundException, AllRoomsAreBookedException
 from src.api.dependency import DBDep, UserIDDep
 from src.sсhemas.bookings import BookingsAdd, BookingsAddRequests
 from src.sсhemas.rooms import Rooms
+from src.exceptions import ObjectNotFoundException, AllRoomsAreBookedException, RoomNotFoundHTTPException
+
 
 router = APIRouter(prefix="/bookings", tags=["Бронирование"])
 
@@ -24,7 +26,7 @@ async def add_booking(data_booking: BookingsAddRequests, user_id: UserIDDep, db:
     try:
         room: Rooms = await db.rooms.get_one(id=data_booking.room_id)
     except ObjectNotFoundException:
-        raise HTTPException(status_code=400, detail="Номер не найден")
+        raise RoomNotFoundHTTPException
     hotel = await db.hotels.get_one_or_none(id=room.hotel_id)
     _bookings_data = BookingsAdd(price=room.price, user_id=user_id, **data_booking.model_dump())
     try:
