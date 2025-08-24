@@ -24,5 +24,9 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env")
 
+    @property
+    def REDIS_URL(self):
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
+
 
 settings = Settings()

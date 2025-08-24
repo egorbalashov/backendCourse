@@ -3,9 +3,9 @@ from passlib.context import CryptContext
 from datetime import datetime, timezone, timedelta
 import jwt
 from config import settings
+from src.services.base import BaseService
 
-
-class AuthService:
+class AuthService(BaseService):
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def hash_password(self, password: str) -> str:
