@@ -19,7 +19,6 @@ async def get_hotels(
     title: str | None = Query(None, description="Название"),
     location: str | None = Query(None, description="Адрес"),
 ):
-    print(f"Endpoint received: date_from={date_from}, date_to={date_to}")
     return await HotelService(db).get_filtered_by_time(
         pagination=pagination,
         date_from=date_from,
@@ -74,8 +73,7 @@ async def put_hotel(hotel_id: int, hotel_data: HotelADD, db: DBDep):
 
 @router.delete("{hotel_id}")
 async def delete_hotel(hotel_id: int, db: DBDep):
-    await db.hotels.delete(id=hotel_id)
-    await db.commit()
+    await HotelService(db).delete_hotel(hotel_id=hotel_id)
     return {"status": "ОК"}
 
 
