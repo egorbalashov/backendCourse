@@ -1,7 +1,7 @@
 from src.sсhemas.fasilities import FasilitiesAddRequests
 from src.services.base import BaseService
 from src.tasks.tasks import test_task
-from sсhemas.fasilities import FasilitiesAddRequests
+from src.sсhemas.fasilities import FasilitiesAddRequests
 
 
 class FacilityService(BaseService):
@@ -11,7 +11,7 @@ class FacilityService(BaseService):
         facility = await self.db.fasilities.add(data)
         await self.db.commit()
 
-        # test_task.delay()  # type: ignore
+        test_task.delay()  # type: ignore
         return facility
     
     

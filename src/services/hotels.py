@@ -1,7 +1,7 @@
 from datetime import date
 
 
-from api.dependency import PaginationDep
+from src.api.dependency import PaginationDep
 from src.exceptions import check_date_to_after_date_from, ObjectNotFoundException, HotelNotFoundException
 from src.sсhemas.hotel import HotelADD, HotelPATCH, Hotel
 from src.services.base import BaseService

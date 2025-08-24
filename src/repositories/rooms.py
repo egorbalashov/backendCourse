@@ -6,7 +6,7 @@ from src.repositories.base import BaseRepository
 from src.repositories.utils import rooms_ids_for_booking
 from sqlalchemy.exc import NoResultFound
 from src.exceptions import RoomNotFoundException
-
+from sqlalchemy.orm import selectinload
 from datetime import date
 
 

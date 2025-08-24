@@ -2,9 +2,10 @@ from fastapi import APIRouter
 
 from src.api.dependency import DBDep
 from src.sсhemas.fasilities import FasilitiesAddRequests
+from src.services.facilities import FacilityService
 from fastapi_cache.decorator import cache
 
-from src.services.facilities import FacilityService
+
 router = APIRouter(prefix="/fasilities", tags=["Удобства"])
 
 

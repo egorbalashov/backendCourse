@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import logging
 from pathlib import Path
 import sys
 import uvicorn
@@ -16,6 +17,7 @@ from src.api.fasilities import router as router_fasilities
 from src.api.images import router as router_images
 from src.init import redis_manager
 
+logging.basicConfig(level=logging.INFO)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -38,4 +40,4 @@ app.include_router(router_images)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", reload=True)

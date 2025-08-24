@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Response
 
-import sqlalchemy
 
 
 from src.exceptions import ObjectAlreadyExistsException

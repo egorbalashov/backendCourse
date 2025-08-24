@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
-from sсhemas.fasilities import Fasilities
+from src.sсhemas.fasilities import Fasilities
 
 
 class RoomsAddRequests(BaseModel):
