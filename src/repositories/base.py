@@ -8,6 +8,7 @@ from src.exceptions import ObjectNotFoundException, ObjectAlreadyExistsException
 from src.repositories.mappers.base import DataMapper
 from asyncpg.exceptions import UniqueViolationError
 
+
 class BaseRepository:
     model = None
     mapper: DataMapper = None
@@ -22,7 +23,7 @@ class BaseRepository:
         if model is None:
             return None
         return self.mapper.map_to_domain_entity(model)
-    
+
     async def get_one(self, **filter_by) -> BaseModel:
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)

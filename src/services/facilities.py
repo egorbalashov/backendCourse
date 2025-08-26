@@ -7,11 +7,10 @@ from src.sсhemas.fasilities import FasilitiesAddRequests
 class FacilityService(BaseService):
     async def get_all(self):
         return await self.db.fasilities.get_all()
+
     async def add_fasilities(self, data: FasilitiesAddRequests):
         facility = await self.db.fasilities.add(data)
         await self.db.commit()
 
         test_task.delay()  # type: ignore
         return facility
-    
-    

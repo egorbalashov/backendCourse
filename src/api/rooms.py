@@ -3,8 +3,18 @@ from fastapi import APIRouter, Body, Path, Query
 from src.api.dependency import DBDep
 from src.sсhemas.fasilities import RoomFasilitiesAdd
 from src.sсhemas.rooms import RoomPatch, RoomsADD, RoomsAddRequests, RoomsPatchRequests
-from src.exceptions import check_date_to_after_date_from, ObjectNotFoundException, HotelNotFoundHTTPException, RoomNotFoundHTTPException
-from src.exceptions import HotelNotFoundHTTPException, RoomNotFoundHTTPException, RoomNotFoundException, HotelNotFoundException
+from src.exceptions import (
+    check_date_to_after_date_from,
+    ObjectNotFoundException,
+    HotelNotFoundHTTPException,
+    RoomNotFoundHTTPException,
+)
+from src.exceptions import (
+    HotelNotFoundHTTPException,
+    RoomNotFoundHTTPException,
+    RoomNotFoundException,
+    HotelNotFoundException,
+)
 from src.sсhemas.rooms import RoomsAddRequests, RoomsAddRequests
 from src.services.rooms import RoomService
 
@@ -63,7 +73,6 @@ async def add_rooms(
         room = await RoomService(db).create_room(hotel_id, room_data)
     except HotelNotFoundException:
         raise HotelNotFoundHTTPException
-
 
     return {"status": "OK", "data": room}
 

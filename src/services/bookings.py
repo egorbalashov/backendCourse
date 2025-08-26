@@ -7,22 +7,17 @@ from src.sсhemas.rooms import Rooms
 
 
 class BookingService(BaseService):
-
-    
     async def get_all(self):
         return await self.db.bookings.get_all()
-    
 
-    async def get_filtered(self,
-                           user_id:int):
-    
+    async def get_filtered(self, user_id: int):
         return await self.db.bookings.get_filtered(user_id=user_id)
-    
-    async def add_booking(self,
-                          data_booking: BookingsAddRequests, 
-                          user_id: UserIDDep, 
-                          
-):
+
+    async def add_booking(
+        self,
+        data_booking: BookingsAddRequests,
+        user_id: UserIDDep,
+    ):
         try:
             room: Rooms = await self.db.rooms.get_one(id=data_booking.room_id)
         except ObjectNotFoundException:

@@ -34,7 +34,7 @@ class RoomsRepository(BaseRepository):
         if model is None:
             return None
         return RoomDataWithRelsMapper.map_to_domain_entity(model)
-    
+
     async def get_one_with_rels(self, **filter_by):
         query = (
             select(self.model).options(selectinload(self.model.facilities)).filter_by(**filter_by)  # type: ignore

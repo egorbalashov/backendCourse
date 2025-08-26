@@ -6,15 +6,15 @@ from src.exceptions import check_date_to_after_date_from, ObjectNotFoundExceptio
 from src.sсhemas.hotel import HotelADD, HotelPATCH, Hotel
 from src.services.base import BaseService
 
+
 class HotelService(BaseService):
-        
     async def get_filtered_by_time(
-            self,
-            pagination: PaginationDep,
-            date_from: date,
-            date_to: date,
-            title: str | None,
-            location: str | None,
+        self,
+        pagination: PaginationDep,
+        date_from: date,
+        date_to: date,
+        title: str | None,
+        location: str | None,
     ):
         print(f"Service received: date_from={date_from}, date_to={date_to}")
         check_date_to_after_date_from(date_from, date_to)
@@ -27,15 +27,15 @@ class HotelService(BaseService):
             limit=per_page,
             offset=per_page * (pagination.page - 1),
         )
-    
+
     async def get_hotel(self, hotel_id: int):
         return await self.db.hotels.get_one(id=hotel_id)
-    
+
     async def add_hotel(self, data: HotelADD):
         hotel = await self.db.hotels.add(data)
         await self.db.commit()
         return hotel
-    
+
     async def edit_hotel(self, hotel_id: int, data: HotelADD):
         await self.db.hotels.edit(data, id=hotel_id)
         await self.db.commit()

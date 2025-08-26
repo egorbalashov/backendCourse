@@ -20,11 +20,7 @@ async def get_hotels(
     location: str | None = Query(None, description="Адрес"),
 ):
     return await HotelService(db).get_filtered_by_time(
-        pagination=pagination,
-        date_from=date_from,
-        date_to=date_to,      
-        title=title,
-        location=location
+        pagination=pagination, date_from=date_from, date_to=date_to, title=title, location=location
     )
 
 

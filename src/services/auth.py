@@ -5,6 +5,7 @@ import jwt
 from src.config import settings
 from src.services.base import BaseService
 
+
 class AuthService(BaseService):
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

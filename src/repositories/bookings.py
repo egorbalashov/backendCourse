@@ -11,6 +11,7 @@ from src.sсhemas.bookings import BookingsAdd
 
 from src.exceptions import AllRoomsAreBookedException
 
+
 class BookingsRepositories(BaseRepository):
     model = BookingsOrm
     mapper = BookingDataMapper

@@ -18,14 +18,14 @@ async def all_bookings(db: DBDep):
 
 @router.get("/bookings/me")
 async def all_bookings_me(db: DBDep, user_id: UserIDDep):
-    
-    
     bookings_me = await BookingService(db).get_filtered(user_id=user_id)
     return {"status": "ОК", "data": bookings_me}
 
+
 @router.post("")
 async def add_booking(data_booking: BookingsAddRequests, user_id: UserIDDep, db: DBDep):
-    booking = await BookingService(db).add_booking(data_booking=data_booking,
-                                                   user_id=user_id,
-                                                   )
+    booking = await BookingService(db).add_booking(
+        data_booking=data_booking,
+        user_id=user_id,
+    )
     return {"status": "OK", "data": booking}
